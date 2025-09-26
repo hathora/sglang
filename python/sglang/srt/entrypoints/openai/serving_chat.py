@@ -739,11 +739,7 @@ class OpenAIServingChat(OpenAIServingBase):
             ):
                 history_tool_calls_cnt = self._get_history_tool_calls_cnt(request)
                 tool_calls, text, finish_reason = self._process_tool_calls(
-                    text,
-                    request.tools,
-                    finish_reason,
-                    request.tool_choice,
-                    history_tool_calls_cnt,
+                    text, request.tools, finish_reason, history_tool_calls_cnt
                 )
 
             choice_data = ChatCompletionResponseChoice(
@@ -858,9 +854,8 @@ class OpenAIServingChat(OpenAIServingBase):
         text: str,
         tools: List[Any],
         finish_reason: Dict[str, Any],
-        tool_choice: Optional[Union[str, ToolChoice]] = None,
         history_tool_calls_cnt: int = 0,
-    ) -> ToolCallProcessingResult:
+    ) -> tuple[Optional[List[ToolCall]], str, Dict[str, Any]]:
         """Process tool calls in the response"""
 
         # Handle required or named tool choice
