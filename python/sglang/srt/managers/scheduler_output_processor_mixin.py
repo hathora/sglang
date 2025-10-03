@@ -567,8 +567,8 @@ class SchedulerOutputProcessorMixin:
             if req is skip_req:
                 continue
 
-            # Multimodal partial stream chunks break the detokenizer, so drop aborted requests here.
-            if self.model_config.is_multimodal_gen and req.to_abort:
+            # Drop aborted requests here.
+            if req.to_abort:
                 continue
 
             if req.finished():
@@ -585,15 +585,12 @@ class SchedulerOutputProcessorMixin:
                     )
                     should_output = (
                         len(req.output_ids) % stream_interval == 1
-                        if not self.model_config.is_multimodal_gen
-                        and stream_interval > 1
+                        if stream_interval > 1
                         else len(req.output_ids) % stream_interval == 0
                     )
                 else:
                     should_output = (
                         len(req.output_ids) % DEFAULT_FORCE_STREAM_INTERVAL == 0
-                        if not self.model_config.is_multimodal_gen
-                        else False
                     )
 
             if should_output:
@@ -608,10 +605,7 @@ class SchedulerOutputProcessorMixin:
                 decoded_texts.append(req.decoded_text)
                 decode_ids, read_offset = req.init_incremental_detokenize()
 
-                if self.model_config.is_multimodal_gen:
-                    decode_ids_list.append(decode_ids)
-                else:
-                    decode_ids_list.append(decode_ids[req.send_decode_id_offset :])
+                decode_ids_list.append(decode_ids[req.send_decode_id_offset :])
 
                 req.send_decode_id_offset = len(decode_ids)
                 read_offsets.append(read_offset)
@@ -711,9 +705,6 @@ class SchedulerOutputProcessorMixin:
 
         # Send to detokenizer
         if rids:
-            if self.model_config.is_multimodal_gen:
-                return
-
             self.send_to_detokenizer.send_pyobj(
                 BatchTokenIDOut(
                     rids,

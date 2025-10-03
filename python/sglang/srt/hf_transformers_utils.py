@@ -140,9 +140,12 @@ def get_config(
         client.pull_files(ignore_pattern=["*.pt", "*.safetensors", "*.bin"])
         model = client.get_local_dir()
 
-    config = AutoConfig.from_pretrained(
-        model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
-    )
+    try:
+        config = AutoConfig.from_pretrained(
+            model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
+        )
+    except ValueError as e:
+        raise
     if (
         config.architectures is not None
         and config.architectures[0] == "Phi4MMForCausalLM"
