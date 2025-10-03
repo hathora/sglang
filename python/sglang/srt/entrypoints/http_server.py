@@ -296,6 +296,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+"""
+Note: VACE router integration removed. VACE now runs in its own container.
+"""
+
 
 @app.exception_handler(HTTPException)
 async def validation_exception_handler(request: Request, exc: HTTPException):
