@@ -5,12 +5,13 @@ set -e
 export SGLANG_DG_CACHE_DIR=/cache
 export DG_JIT_CACHE_DIR=/cache
 export HF_HOME=/cache
-export NCCL_SOCKET_IFNAME=ens6 GLOO_SOCKET_IFNAME=ens6
+export NCCL_SOCKET_IFNAME=ens6
+export GLOO_SOCKET_IFNAME=ens6
 
 # Configuration
 MODEL_PATH="moonshotai/Kimi-K2-Instruct"
 MASTER_PORT=20000
-HTTP_PORT=${HTTP_PORT:-8000}
+HTTP_PORT=${HTTP_PORT:-20000}
 
 # Determine node role
 if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
