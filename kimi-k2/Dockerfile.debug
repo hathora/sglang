@@ -1,0 +1,20 @@
+FROM lmsysorg/sglang:v0.5.3.post1-cu129-amd64
+
+WORKDIR /app
+
+COPY start_kimi.py .
+
+
+# Debug: Simple TCP listen server that sleeps
+RUN apt-get update && apt-get install -y --no-install-recommends netcat-openbsd
+RUN echo '#!/bin/bash\n\
+echo "Starting debug TCP server on port 8000..."\n\
+while true; do\n\
+  echo "Listening on port 8000..."\n\
+  echo -e "HTTP/1.1 200 OK\\r\\nContent-Type: text/plain\\r\\n\\r\\nDebug server running" | nc -l -p 8000\n\
+  echo "Connection handled, sleeping for 1 hour..."\n\
+  sleep 3600\n\
+done' > /app/debug_server.sh && chmod +x /app/debug_server.sh
+
+# Use debug server
+ENTRYPOINT ["/app/debug_server.sh"]
