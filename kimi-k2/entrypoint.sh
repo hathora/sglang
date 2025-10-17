@@ -11,7 +11,7 @@ export GLOO_SOCKET_IFNAME=ens6
 # Configuration
 MODEL_PATH="moonshotai/Kimi-K2-Instruct"
 MASTER_PORT=20000
-HTTP_PORT=${HTTP_PORT:-20000}
+HTTP_PORT=${HTTP_PORT:-8000}
 
 # Determine node role
 if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
@@ -24,7 +24,6 @@ else
   # Secondary node
   MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
   NODE_RANK=1
-  socat TCP-LISTEN:$HTTP_PORT,fork,reuseaddr TCP:$MASTER_IP:$HTTP_PORT &
   SERVER_ARGS=""
 fi
 
