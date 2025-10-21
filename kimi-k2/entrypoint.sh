@@ -6,8 +6,6 @@ export SGL_DG_CACHE_DIR=/cache
 export SGLANG_DG_CACHE_DIR=/cache
 export DG_JIT_CACHE_DIR=/cache
 export HF_HOME=/cache
-export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-ens6}
-export GLOO_SOCKET_IFNAME=${GLOO_SOCKET_IFNAME:-ens6}
 export CONTEXT_LENGTH=${CONTEXT_LENGTH:-8192}
 export QUANTIZATION=${QUANTIZATION:-fp8}
 
@@ -16,6 +14,26 @@ MODEL_PATH="moonshotai/Kimi-K2-Instruct"
 MASTER_PORT=20000
 HTTP_PORT=${HTTP_PORT:-25000}
 API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
+
+# Determine IB interfaces
+IB_IFACES=""
+for d in $(ibstat | grep -i "Active" -B 8 | grep -E "^CA" | awk '{ print $2 }' | sed "s/'//g"); do
+  if [[ -d "/sys/class/infiniband/$d/device/net" ]]; then
+    for n in $(ls "/sys/class/infiniband/$d/device/net"); do
+      IB_IFACES+="${IB_IFACES:+,}$n"
+    done
+  fi
+done
+
+echo "$IFACES"
+
+export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-$IFACES}
+export GLOO_SOCKET_IFNAME=${GLOO_SOCKET_IFNAME:-$IFACES}
+
+if [[ -z "$NCCL_SOCKET_IFNAME" || -z "$GLOO_SOCKET_IFNAME" ]]; then
+  echo "No active IB interfaces found. Exiting."
+  exit 1
+fi
 
 # Determine node role
 if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
