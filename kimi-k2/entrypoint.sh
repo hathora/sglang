@@ -6,8 +6,10 @@ export SGL_DG_CACHE_DIR=/cache
 export SGLANG_DG_CACHE_DIR=/cache
 export DG_JIT_CACHE_DIR=/cache
 export HF_HOME=/cache
-export NCCL_SOCKET_IFNAME=ens6
-export GLOO_SOCKET_IFNAME=ens6
+export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-ens6}
+export GLOO_SOCKET_IFNAME=${GLOO_SOCKET_IFNAME:-ens6}
+export CONTEXT_LENGTH=${CONTEXT_LENGTH:-8192}
+export QUANTIZATION=${QUANTIZATION:-fp8}
 
 # Configuration
 MODEL_PATH="moonshotai/Kimi-K2-Instruct"
@@ -36,6 +38,8 @@ exec python3 -m sglang.launch_server \
   --dist-init-addr "$MASTER_IP:$MASTER_PORT" \
   --nnodes 2 \
   --node-rank $NODE_RANK \
+  --context-length $CONTEXT_LENGTH \
+  --quantization $QUANTIZATION \
   --trust-remote-code \
   --tool-call-parser kimi_k2 \
   $SERVER_ARGS \
