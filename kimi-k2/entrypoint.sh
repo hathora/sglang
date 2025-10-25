@@ -11,7 +11,7 @@ export HF_HOME=/cache/2
 # Configuration
 export MODEL_PATH="moonshotai/Kimi-K2-Instruct"
 export MASTER_PORT=20000
-export HTTP_PORT=${PORT:-25000}
+export PORT=${PORT:-25000}
 export API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
 
 # Tunables (env override friendly)
