@@ -18,7 +18,6 @@ export API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
 export CONTEXT_LENGTH=${CONTEXT_LENGTH:-131072}           # e.g. 131072 for K2 max
 export MEM_FRACTION_STATIC=${MEM_FRACTION_STATIC:-0.70} # e.g. 0.70–0.80 recommended
 export QUANTIZATION=${QUANTIZATION:-fp8}
-export MAX_RUNNING_REQUESTS=${MAX_RUNNING_REQUESTS:-32}
 
 # Determine IB interfaces
 IB_IFACES=""
@@ -49,7 +48,7 @@ if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
   MASTER_IP=$HATHORA_PRIVATE_IP
   NODE_RANK=0
   python3 create_hathora_room.py "$MASTER_IP"
-  SERVER_ARGS="--host 0.0.0.0 --port $PORT --api-key $API_KEY --max-running-requests $MAX_RUNNING_REQUESTS"
+  SERVER_ARGS="--host 0.0.0.0 --port $PORT --api-key $API_KEY"
 else
   # Secondary node
   MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
