@@ -13,7 +13,10 @@ export MODEL_PATH="moonshotai/Kimi-K2-Instruct"
 export MASTER_PORT=20000
 export PORT=${PORT:-25000}
 export API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
-export CONTEXT_LENGTH=${CONTEXT_LENGTH:-8192}
+
+# Tunables (env override friendly)
+export CONTEXT_LENGTH=${CONTEXT_LENGTH:-131072}           # e.g. 131072 for K2 max
+export MEM_FRACTION_STATIC=${MEM_FRACTION_STATIC:-0.70} # e.g. 0.70–0.80 recommended
 export QUANTIZATION=${QUANTIZATION:-fp8}
 export MAX_RUNNING_REQUESTS=${MAX_RUNNING_REQUESTS:-32}
 
@@ -30,7 +33,6 @@ for d in $(ibstat | grep -i "Active" -B 8 | grep -E "^CA" | awk '{ print $2 }' |
 done
 
 echo "Enabled IB interfaces: $IB_IFACES"
-
 echo "$IB_IFACES"
 
 export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-$IB_IFACES}
@@ -55,7 +57,7 @@ else
   SERVER_ARGS=""
 fi
 
-# if DEBUG is set, then start a netcat listener on port 
+# if DEBUG is set, then start a netcat listener on port
 if [ -n "$DEBUG" ]; then
   while true; do
     nc -l -p $PORT
@@ -71,8 +73,9 @@ exec python3 -m sglang.launch_server \
   --dist-init-addr "$MASTER_IP:$MASTER_PORT" \
   --nnodes 2 \
   --node-rank $NODE_RANK \
-  --context-length $CONTEXT_LENGTH \
-  --quantization $QUANTIZATION \
+  --context-length "$CONTEXT_LENGTH" \
+  --mem-fraction-static "$MEM_FRACTION_STATIC" \
+  --quantization "$QUANTIZATION" \
   --trust-remote-code \
   --tool-call-parser kimi_k2 \
   $SERVER_ARGS \
