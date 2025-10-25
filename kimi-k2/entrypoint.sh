@@ -2,18 +2,20 @@
 set -e
 
 # Environment setup
-export SGL_DG_CACHE_DIR=/cache
-export SGLANG_DG_CACHE_DIR=/cache
-export DG_JIT_CACHE_DIR=/cache
-export HF_HOME=/cache
-export CONTEXT_LENGTH=${CONTEXT_LENGTH:-8192}
-export QUANTIZATION=${QUANTIZATION:-fp8}
+export SGL_DG_CACHE_DIR=/cache/2
+export SGLANG_DG_CACHE_DIR=/cache/2
+export DG_JIT_CACHE_DIR=/cache/2
+export HF_HOME=/cache/2
+# export SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
 
 # Configuration
-MODEL_PATH="moonshotai/Kimi-K2-Instruct"
-MASTER_PORT=20000
-HTTP_PORT=${HTTP_PORT:-25000}
-API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
+export MODEL_PATH="moonshotai/Kimi-K2-Instruct"
+export MASTER_PORT=20000
+export PORT=${PORT:-25000}
+export API_KEY="${API_KEY:-${HATHORA_APP_SECRET:-}}"
+export CONTEXT_LENGTH=${CONTEXT_LENGTH:-8192}
+export QUANTIZATION=${QUANTIZATION:-fp8}
+export MAX_RUNNING_REQUESTS=${MAX_RUNNING_REQUESTS:-32}
 
 # Determine IB interfaces
 IB_IFACES=""
@@ -41,12 +43,21 @@ if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
   MASTER_IP=$HATHORA_PRIVATE_IP
   NODE_RANK=0
   python3 create_hathora_room.py "$MASTER_IP"
-  SERVER_ARGS="--host 0.0.0.0 --port $HTTP_PORT --api-key $API_KEY"
+  SERVER_ARGS="--host 0.0.0.0 --port $PORT --api-key $API_KEY --max-running-requests $MAX_RUNNING_REQUESTS"
 else
   # Secondary node
   MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
   NODE_RANK=1
   SERVER_ARGS=""
+fi
+
+# if DEBUG is set, then start a netcat listener on port 
+if [ -n "$DEBUG" ]; then
+  while true; do
+    nc -l -p $PORT
+    echo "Received request"
+    sleep 1
+  done
 fi
 
 # Launch SGLang server
