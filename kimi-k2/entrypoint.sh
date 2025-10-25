@@ -25,10 +25,10 @@ for d in $(ibstat | grep -i "Active" -B 8 | grep -E "^CA" | awk '{ print $2 }' |
   fi
 done
 
-echo "$IFACES"
+echo "$IB_IFACES"
 
-export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-$IFACES}
-export GLOO_SOCKET_IFNAME=${GLOO_SOCKET_IFNAME:-$IFACES}
+export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:-$IB_IFACES}
+export GLOO_SOCKET_IFNAME=${GLOO_SOCKET_IFNAME:-$IB_IFACES}
 
 if [[ -z "$NCCL_SOCKET_IFNAME" || -z "$GLOO_SOCKET_IFNAME" ]]; then
   echo "No active IB interfaces found. Exiting."
