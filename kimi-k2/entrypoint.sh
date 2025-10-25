@@ -22,10 +22,14 @@ IB_IFACES=""
 for d in $(ibstat | grep -i "Active" -B 8 | grep -E "^CA" | awk '{ print $2 }' | sed "s/'//g"); do
   if [[ -d "/sys/class/infiniband/$d/device/net" ]]; then
     for n in $(ls "/sys/class/infiniband/$d/device/net"); do
+      echo "Enabling IB interface: $n"
+      ip link set "$n" up 2>/dev/null || echo "Failed to bring up $n"
       IB_IFACES+="${IB_IFACES:+,}$n"
     done
   fi
 done
+
+echo "Enabled IB interfaces: $IB_IFACES"
 
 echo "$IB_IFACES"
 
