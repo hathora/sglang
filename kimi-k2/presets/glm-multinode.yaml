@@ -1,0 +1,9 @@
+model-path: zai-org/GLM-4.5V
+tensor-parallel-size: 4
+nnodes: 2
+node-rank: ${NODE_RANK}
+dist-init-addr: ${MASTER_IP}:${MASTER_PORT}
+mem-fraction-static: 0.70
+host: 0.0.0.0
+port: 30000
+api-key: ${API_KEY}

@@ -6,12 +6,12 @@ parser.add_argument("master_ip", help="Master node IP address")
 args = parser.parse_args()
 
 hathora_token = os.getenv('HATHORA_TOKEN')
-kimi_b_app_id = os.getenv('KIMI_B_APP_ID')
+b_app_id = os.getenv('B_APP_ID')
 api_host = "hathora.io" if "hathora.io" in os.getenv("HATHORA_HOSTNAME", "") else "hathora.dev"
 room_config = json.dumps({"master_ip": args.master_ip})
 
 response = requests.post(
-    f"https://api.{api_host}/rooms/v2/{kimi_b_app_id}/create",
+    f"https://api.{api_host}/rooms/v2/{b_app_id}/create",
     headers={"Authorization": f"Bearer {hathora_token}", "Content-Type": "application/json"},
     json={"roomConfig": room_config, "region": "Washington_DC"}
 )

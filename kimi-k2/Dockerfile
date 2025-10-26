@@ -5,8 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ibutils && rm -
 
 WORKDIR /app
 
-COPY entrypoint.sh .
-COPY create_hathora_room.py .
+COPY . .
 
-ENTRYPOINT ["bash", "./entrypoint.sh"]
+ENTRYPOINT ["bash", "./entrypoint_config.sh"]
 
