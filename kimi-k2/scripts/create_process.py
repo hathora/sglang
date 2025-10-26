@@ -12,7 +12,8 @@ api_host = "hathora.io" if "hathora.io" in os.getenv("HATHORA_HOSTNAME", "") els
 
 room_config = json.dumps({
     "master_ip": args.master_ip,
-    "process_id": primary_process_id
+    "process_id": primary_process_id,
+    "app_id": b_app_id
 })
 
 response = requests.post(

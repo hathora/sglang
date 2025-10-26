@@ -2,20 +2,20 @@
 import os, sys, json, requests, argparse, time, signal
 
 parser = argparse.ArgumentParser(description="Monitor a Hathora process")
+parser.add_argument("app_id", help="App ID to monitor")
 parser.add_argument("process_id", help="Process ID to monitor")
 args = parser.parse_args()
 
 hathora_token = os.getenv('HATHORA_TOKEN')
-b_app_id = os.getenv('B_APP_ID')
 api_host = "hathora.io" if "hathora.io" in os.getenv("HATHORA_HOSTNAME", "") else "hathora.dev"
 
-print(f"Monitoring process {args.process_id} every 5 seconds...")
+print(f"Monitoring process {args.process_id} in app {args.app_id} every 5 seconds...")
 
 while True:
     time.sleep(5)
     try:
         response = requests.get(
-            f"https://api.{api_host}/processes/v3/{b_app_id}/{args.process_id}/info",
+            f"https://api.{api_host}/processes/v3/{args.app_id}/{args.process_id}/info",
             headers={"Authorization": f"Bearer {hathora_token}"},
             timeout=5
         )

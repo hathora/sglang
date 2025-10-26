@@ -41,13 +41,14 @@ if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
   export MASTER_IP=$HATHORA_PRIVATE_IP
   export NODE_RANK=0
   PROCESS_ID=$(python3 scripts/create_process.py "$MASTER_IP")
-  python3 scripts/monitor_partner.py "$PROCESS_ID" &
+  python3 scripts/monitor_partner.py "$B_APP_ID" "$PROCESS_ID" &
 else
   # Secondary node
   export MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
   PROCESS_ID=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['process_id'])")
+  APP_ID=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['app_id'])")
   export NODE_RANK=1
-  python3 scripts/monitor_partner.py "$PROCESS_ID" &
+  python3 scripts/monitor_partner.py "$APP_ID" "$PROCESS_ID" &
 fi
 
 # check PRESET and if the preset file exists
