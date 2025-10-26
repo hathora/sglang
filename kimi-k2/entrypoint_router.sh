@@ -45,6 +45,7 @@ else
   # Secondary node
   export MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
   export NODE_RANK=1
+  bash healthcheck_primary.sh $MASTER_IP $PORT &
 fi
 
 # check PRESET and if the preset file exists
