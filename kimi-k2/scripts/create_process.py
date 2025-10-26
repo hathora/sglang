@@ -7,8 +7,13 @@ args = parser.parse_args()
 
 hathora_token = os.getenv('HATHORA_TOKEN')
 b_app_id = os.getenv('B_APP_ID')
+primary_process_id = os.getenv('HATHORA_PROCESS_ID')
 api_host = "hathora.io" if "hathora.io" in os.getenv("HATHORA_HOSTNAME", "") else "hathora.dev"
-room_config = json.dumps({"master_ip": args.master_ip})
+
+room_config = json.dumps({
+    "master_ip": args.master_ip,
+    "process_id": primary_process_id
+})
 
 response = requests.post(
     f"https://api.{api_host}/rooms/v2/{b_app_id}/create",
@@ -17,6 +22,7 @@ response = requests.post(
 )
 
 if response.status_code == 201:
-    print(f"Created room: {response.json()['roomId']}")
+    room_data = response.json()
+    print(room_data['processId'])
 else:
     sys.exit(f"Failed to create room: {response.status_code} - {response.text}")

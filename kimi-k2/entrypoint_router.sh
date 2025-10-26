@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # setup cache directories
 export SGL_DG_CACHE_DIR=/cache/2
@@ -40,12 +40,14 @@ if [ -z "$HATHORA_INITIAL_ROOM_CONFIG" ]; then
   # Primary node
   export MASTER_IP=$HATHORA_PRIVATE_IP
   export NODE_RANK=0
-  python3 create_hathora_room.py "$MASTER_IP"
+  PROCESS_ID=$(python3 scripts/create_process.py "$MASTER_IP")
+  python3 scripts/monitor_partner.py "$PROCESS_ID" &
 else
   # Secondary node
   export MASTER_IP=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['master_ip'])")
+  PROCESS_ID=$(python3 -c "import json,os; print(json.loads(os.environ['HATHORA_INITIAL_ROOM_CONFIG'])['process_id'])")
   export NODE_RANK=1
-  bash healthcheck_primary.sh $MASTER_IP $PORT &
+  python3 scripts/monitor_partner.py "$PROCESS_ID" &
 fi
 
 # check PRESET and if the preset file exists
