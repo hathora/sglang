@@ -111,6 +111,12 @@ def _build_sglang_argv_from_env() -> list[str]:
     _add_arg_if_set(argv, "--router-queue-timeout-secs", os.environ.get("ROUTER_QUEUE_TIMEOUT_SECS"))
     _add_arg_if_set(argv, "--max-queued-requests", os.environ.get("MAX_QUEUED_REQUESTS"))
     
+    _add_arg_if_set(argv, "--router-cache-threshold", os.environ.get("CACHE_THRESHOLD", "0.05"))
+    _add_arg_if_set(argv, "--router-balance-abs-threshold", os.environ.get("BALANCE_ABS_THRESHOLD"))
+    _add_arg_if_set(argv, "--router-balance-rel-threshold", os.environ.get("BALANCE_REL_THRESHOLD"))
+    
+    _add_arg_if_set(argv, "--router-prometheus-port", os.environ.get("ROUTER_PROMETHEUS_PORT"))
+    
     if _env_truthy(os.environ.get("ROUTER_DISABLE_RETRIES")):
         argv.append("--router-disable-retries")
     
