@@ -49,8 +49,6 @@ jobs:
         run: |
           version=$(cat python/sglang/version.py | cut -d'"' -f2)
           tag=v${version}-cu129-amd64
-          sha_short=$(git rev-parse --short HEAD)
-          sha_tag=v${version}-cu129-amd64-${sha_short}
 
           docker buildx build \
             --platform linux/amd64 \
@@ -60,7 +58,6 @@ jobs:
             --build-arg BUILD_TYPE=${{ matrix.variant.build_type }} \
             --build-arg GRACE_BLACKWELL=${{ matrix.variant.grace_blackwell }} \
             -t lmsysorg/sglang:${tag} \
-            -t lmsysorg/sglang:${sha_tag} \
             --no-cache \
             .
 
