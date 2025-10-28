@@ -62,6 +62,7 @@ def _build_sglang_argv_from_env() -> list[str]:
     _add_arg_if_set(argv, "--chat-template", os.environ.get("CHAT_TEMPLATE"))
     _add_arg_if_set(argv, "--tool-call-parser", os.environ.get("TOOL_CALL_PARSER"))
     _add_arg_if_set(argv, "--api-key", os.environ.get("API_KEY") or os.environ.get("HATHORA_APP_SECRET"))
+    _add_arg_if_set(argv, "--cors-allowed-origins", os.environ.get("CORS_ALLOWED_ORIGINS"))
 
     # Embedding mode
     is_embedding = _env_truthy(os.environ.get("IS_EMBEDDING")) or "embedding" in model_path.lower()
