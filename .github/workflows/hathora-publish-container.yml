@@ -43,6 +43,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+<<<<<<< Updated upstream
           file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -51,3 +52,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
 
+=======
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          push: true
+>>>>>>> Stashed changes
